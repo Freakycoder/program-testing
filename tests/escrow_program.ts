@@ -7,10 +7,17 @@ describe("escrow_program", () => {
   anchor.setProvider(anchor.AnchorProvider.env());
 
   const program = anchor.workspace.escrowProgram as Program<EscrowProgram>;
+  const provider = anchor.AnchorProvider.env();
 
-  it("Is initialized!", async () => {
-    // Add your test here.
-    const tx = await program.methods.initialize().rpc();
+  it("initialize fee account", async () => {
+
+    const [feePda] = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from("fee_account"), provider.wallet.publicKey.toBuffer()], program.programId)
+    
+    const tx = await program.methods
+      .initializeFeeAccount().accounts({systemProgram : anchor.web3.SystemProgram.programId, admin : provider.wallet.publicKey})
+      .rpc();
+
     console.log("Your transaction signature", tx);
+
   });
 });
