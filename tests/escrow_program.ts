@@ -1,7 +1,6 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { EscrowProgram } from "../target/types/escrow_program";
-import { SystemProgram } from "@solana/web3.js";
 
 describe("escrow_program", () => {
   // Configure the client to use the local cluster.
@@ -21,6 +20,6 @@ describe("escrow_program", () => {
     console.log("fee account PDA : ", feePda.toBase58())
     
     const feeAccountData = await program.account.feeAccount.fetch(feePda);
-    console.log("fee acount PDA data : {}", feeAccountData.admin.toBase58);
+    console.log("fee acount PDA data : {}", feeAccountData);
   });
 });
