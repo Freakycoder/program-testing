@@ -176,7 +176,7 @@ pub struct InitializeFeeAccount<'info> {
     pub fee_account : Account<'info, FeeAccount>,
     #[account(mut)]
     pub admin : Signer<'info>,
-    pub system_program : SystemAccount<'info>,
+    pub system_program : Program<'info, System>,
 }
 
 #[account]
@@ -198,7 +198,7 @@ pub struct InitializeVault<'info> {
     pub vault : Account<'info, Vault>,
     #[account(mut)]
     pub admin : Signer<'info>,
-    pub system_program : SystemAccount<'info>,
+    pub system_program : Program<'info, System>,
 }
 
 #[account]
@@ -222,7 +222,7 @@ pub struct Deposit<'info> {
     pub vault : Account<'info, Vault>,
     #[account(mut)]
     pub user : Signer<'info>,
-    pub system_program : SystemAccount<'info>,
+    pub system_program : Program<'info, System>,
 }
 
 #[derive(Accounts, Debug)]
@@ -231,7 +231,7 @@ pub struct Withdraw<'info> {
     pub vault : Account<'info, Vault>,
     #[account(mut)]
     pub user : Signer<'info>,
-    pub system_program : SystemAccount<'info>,
+    pub system_program : Program<'info, System>,
     /// CHECK: This is the Solana Instructions Sysvar account, validated by address constraint
     #[account(address = anchor_lang::solana_program::sysvar::instructions::ID)]
     pub instruction_sysvar : AccountInfo<'info>,
@@ -246,7 +246,7 @@ pub struct AdminWithdraw<'info>{
     pub admin : Signer<'info>,
     ///CHECK: This is a admin address passed by the backend itself
     pub admin_address : AccountInfo<'info>,
-    pub system_program : SystemAccount<'info>,
+    pub system_program : Program<'info, System>,
 }
 
 #[derive(Accounts,Debug)]
