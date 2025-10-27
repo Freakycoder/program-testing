@@ -5,7 +5,7 @@ declare_id!("6KNjJqfUVrDZRnosDUDrWeHVAeMcKzvuPjoNC8Gc4JJq");
 #[program]
 pub mod escrow_program {
     use super::*;
-    use anchor_lang::{solana_program::{ed25519_program, sysvar::instructions::load_instruction_at_checked}, system_program};
+    use anchor_lang::{solana_program::{sysvar::instructions::load_instruction_at_checked}, system_program};
     pub fn initialize_fee_account(ctx: Context<InitializeFeeAccount>) -> Result<()>{
         let fee_account = &mut ctx.accounts.fee_account; // here we take mutable reference so that the instruction doesn't consume fee account PDA
         let admin_key = ctx.accounts.admin.key();
@@ -67,6 +67,8 @@ pub mod escrow_program {
     }
 
     pub fn withdrawal(ctx : Context<Withdraw>, amount : u64, _operator_key : String, signed_message : String) -> Result<()>{
+        
+        const ED25519_PROGRAM_ID : Pubkey = pubkey!("Ed25519SigVerify111111111111111111111111111");
         let vault = &mut ctx.accounts.vault;
         let vault_admin = vault.admin;
         require!(!vault.is_paused, VaultError::VaultPaused);
@@ -74,7 +76,7 @@ pub mod escrow_program {
         require!(vault.total_deposited > amount, VaultError::InsufficientBalance);
         let operator_pubkey = vault.operator;
         let ix = load_instruction_at_checked(0, &ctx.accounts.instruction_sysvar)?;
-        require!(ix.program_id == ed25519_program::ID, VaultError::ProgramMissing);
+        require!(ix.program_id == ED25519_PROGRAM_ID, VaultError::ProgramMissing);
         let is_message = ix.data.windows(signed_message.len()).any(|message| message == signed_message.as_bytes());
         require!(is_message, VaultError::SignedMessageMissing);
         let is_operator_key = ix.data.windows(operator_pubkey.to_bytes().len()).any(|pubkey| pubkey == operator_pubkey.to_bytes());
@@ -230,6 +232,7 @@ pub struct Withdraw<'info> {
     #[account(mut)]
     pub user : Signer<'info>,
     pub system_program : SystemAccount<'info>,
+    /// CHECK: This is the Solana Instructions Sysvar account, validated by address constraint
     #[account(address = anchor_lang::solana_program::sysvar::instructions::ID)]
     pub instruction_sysvar : AccountInfo<'info>,
     pub fee_account : Account<'info, FeeAccount>
@@ -241,6 +244,7 @@ pub struct AdminWithdraw<'info>{
     pub vault : Account<'info, Vault>,
     #[account(mut)]
     pub admin : Signer<'info>,
+    ///CHECK: This is a admin address passed by the backend itself
     pub admin_address : AccountInfo<'info>,
     pub system_program : SystemAccount<'info>,
 }
