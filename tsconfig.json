@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "lib": ["es2015"],
+    "module": "commonjs",
+    "target": "es6",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "strict": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist"
+  },
+  "include": ["tests/**/*", "app/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
